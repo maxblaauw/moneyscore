@@ -71,10 +71,12 @@
   }
   .button-group {
     display: flex;
+    flex-wrap: wrap;
     width: 100%; /* Make sure the button group takes full width of the player div */
+    gap: 5px; /* Space between buttons */
   }
   .button-group > button {
-    flex: 1; /* Each button takes equal space in the group */
+    flex-basis: calc(50% - 5px); /* Two buttons per row */
   }
   .collect-bank {
     flex-grow: 2; /* Double the width compared to Win/Lose buttons */
@@ -151,7 +153,10 @@
         <div class="button-group">
           <button onclick="addMoney(this)">Win</button>
           <button onclick="subtractMoney(this)">Lose</button>
+        </div>
+        <div class="button-group">
           <button class="collect-bank" onclick="collectBank(this)">Collect Bank</button>
+          <button class="reset-money" onclick="resetMoney(this)">Reset</button>
         </div>
       </div>
     </div>
@@ -247,6 +252,13 @@
       playerDiv.parentNode.removeChild(playerDiv);
       logAction("Player deleted");
       updateScoreboard(); // Update the scoreboard after deleting a player
+    }
+
+    function resetMoney(button) {
+      var playerScoreField = button.closest('.player').querySelector('.player-score');
+      playerScoreField.value = '€0';
+      logAction("Player's money reset to €0");
+      updateScoreboard(); // Update the scoreboard after resetting money
     }
 
     function getPlayerName(button) {
