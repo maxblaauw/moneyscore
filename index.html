@@ -63,10 +63,11 @@
     gap: 20px; /* Space between players */
   }
   .player {
-    flex-basis: 250px; /* Fixed basis for each player */
+    flex-basis: calc(50% - 20px); /* Maximum of two players per row */
     padding-bottom: 10px;
     margin-bottom: 20px; /* Increased space between player sections */
     border-bottom: 1px solid #333; /* Subtle divider between players */
+    position: relative;
   }
   .button-group {
     display: flex;
@@ -91,16 +92,51 @@
   h2, h3 {
     margin-top: 0; /* Remove top margin for headings */
   }
+  /* Styling for the scoreboard */
+  #scoreboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1.4em; /* 40% larger font size */
+  }
+  .score-box {
+    background-color: #F0FF05;
+    color: #333;
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: calc(50% - 20px); /* Maximum of two players per row */
+  }
+  .delete-player {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: transparent;
+    color: #F0FF05;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+  }
 </style>
 </head>
 <body>
   <div class="container">
+    <!-- Scoreboard -->
+    <div id="scoreboard"></div>
+
     <h2>Money Tracker</h2>
     <input type="number" id="pointsInput" placeholder="Enter € amount here" />
 
     <div id="players">
       <!-- Player 1 template -->
       <div class="player">
+        <button class="delete-player" onclick="deletePlayer(this)">x</button>
         <input type="text" class="player-name" placeholder="Player Name">
         <input type="text" class="player-score" value="€0" onchange="updateScore(this)">
         <div class="button-group">
@@ -124,6 +160,25 @@
   </div>
 
   <script>
+    // Function to update the scoreboard
+    function updateScoreboard() {
+      var players = document.querySelectorAll('.player');
+      var scoreboard = document.getElementById('scoreboard');
+      scoreboard.innerHTML = ''; // Clear existing content
+      players.forEach(function(player) {
+        var playerName = player.querySelector('.player-name').value || "Unnamed Player";
+        var playerScore = player.querySelector('.player-score').value;
+        var scoreBox = document.createElement('div');
+        scoreBox.classList.add('score-box');
+        scoreBox.textContent = playerName + ": " + playerScore;
+        scoreboard.appendChild(scoreBox);
+      });
+    }
+
+    // Call updateScoreboard initially
+    updateScoreboard();
+
+    // Add the rest of your JavaScript functions here
     function addMoney(button) {
       var pointsInput = document.getElementById('pointsInput');
       var pointsToAdd = parseInt(pointsInput.value, 10);
@@ -135,6 +190,7 @@
       var currentScore = parseInt(playerScoreField.value.substring(1), 10); // Remove € symbol
       playerScoreField.value = '€' + (currentScore + pointsToAdd);
       logAction("€" + pointsToAdd + " added to " + getPlayerName(button));
+      updateScoreboard(); // Update the scoreboard after modifying the score
     }
 
     function subtractMoney(button) {
@@ -149,6 +205,7 @@
       var bank = document.getElementById('bank');
       bank.textContent = '€' + (parseInt(bank.textContent.substring(1), 10) + pointsToSubtract);
       logAction("€" + pointsToSubtract + " subtracted from " + getPlayerName(button));
+      updateScoreboard(); // Update the scoreboard after modifying the score
     }
 
     function collectBank(button) {
@@ -163,6 +220,7 @@
       playerScoreField.value = '€' + (currentScore + bankPoints);
       bank.textContent = '€0';
       logAction("Bank collected by " + getPlayerName(button));
+      updateScoreboard(); // Update the scoreboard after modifying the score
     }
 
     function addPlayer() {
@@ -172,6 +230,14 @@
       newPlayerDiv.querySelector('.player-score').value = '€0';
       playersDiv.appendChild(newPlayerDiv);
       logAction("New player added");
+      updateScoreboard(); // Update the scoreboard after adding a new player
+    }
+
+    function deletePlayer(button) {
+      var playerDiv = button.closest('.player');
+      playerDiv.parentNode.removeChild(playerDiv);
+      logAction("Player deleted");
+      updateScoreboard(); // Update the scoreboard after deleting a player
     }
 
     function getPlayerName(button) {
