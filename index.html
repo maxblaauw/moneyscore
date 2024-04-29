@@ -159,7 +159,7 @@
     </div>
 
     <h2>Money Tracker</h2>
-    <input type="number" id="pointsInput" placeholder="Enter € amount here" />
+    <input type="text" id="pointsInput" placeholder="€0" value="€0">
 
     <div id="players">
       <!-- Player 1 template -->
@@ -180,7 +180,7 @@
 
     <div class="flex justify-between">
       <button class="px-4" onclick="addPlayer()">Add Player</button>
-      <button class="px-4" onclick="updateNames()">Update All Fields</button>
+      <button class="px-4" onclick="updateNames()">Update Names</button>
     </div>
 
     <div class="mt-4">
@@ -212,7 +212,7 @@
     // Add the rest of your JavaScript functions here
     function addMoney(button) {
       var pointsInput = document.getElementById('pointsInput');
-      var pointsToAdd = parseInt(pointsInput.value, 10);
+      var pointsToAdd = parseInt(pointsInput.value.substring(1), 10);
       var playerScoreField = button.closest('.player').querySelector('.player-score');
       if (isNaN(pointsToAdd) || pointsToAdd <= 0) {
         alert('Please enter a positive € amount to add.');
@@ -295,6 +295,13 @@
     function updateNames() {
       updateScoreboard(); // Update the scoreboard after updating names
     }
+
+    // Prevent deletion of Euro sign in points input field
+    document.getElementById('pointsInput').addEventListener('input', function(event) {
+      if (!event.target.value.startsWith('€')) {
+        event.target.value = '€' + event.target.value;
+      }
+    });
   </script>
 </body>
 </html>
