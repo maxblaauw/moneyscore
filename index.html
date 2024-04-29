@@ -36,7 +36,7 @@
   input.player-score {
     width: 60%; /* Larger width for score fields */
     font-size: 1.4em; /* Larger font size */
-    height: 46px; /* Double the height */
+    height: 100px; /* Make the score blocks square */
     font-weight: bold; /* Bold font for emphasis */
   }
   input#pointsInput {
@@ -110,6 +110,15 @@
     border-radius: 4px;
     margin-bottom: 10px;
     width: calc(50% - 20px); /* Maximum of two players per row */
+    text-align: center;
+  }
+  .score-name {
+    font-size: 1em; /* Normal font size for player name */
+    margin-bottom: 5px; /* Increased space between name and score */
+  }
+  .score-money {
+    font-size: 1.6em; /* Larger font size for money */
+    font-weight: bold; /* Bold font for emphasis */
   }
   .delete-player {
     position: absolute;
@@ -170,7 +179,7 @@
         var playerScore = player.querySelector('.player-score').value;
         var scoreBox = document.createElement('div');
         scoreBox.classList.add('score-box');
-        scoreBox.textContent = playerName + ": " + playerScore;
+        scoreBox.innerHTML = `<div class="score-name">${playerName}</div><div class="score-money">${playerScore}</div>`;
         scoreboard.appendChild(scoreBox);
       });
     }
