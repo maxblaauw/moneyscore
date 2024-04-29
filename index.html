@@ -36,7 +36,7 @@
   input.player-score {
     width: 60%; /* Larger width for score fields */
     font-size: 1em; /* Larger font size */
-      }
+  }
   input#pointsInput {
     width: 100%;
     font-size: 1.2em; /* Larger text for main input field */
@@ -48,7 +48,7 @@
     background-color: #333; /* Base button color */
     border: 1px solid #F0FF05; /* Yellow border */
     color: #F0FF05; /* Yellow text */
-    padding: 10px 20px; /* More padding for a larger button */
+    padding: 10px; /* More padding for a larger button */
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
@@ -129,7 +129,7 @@
     background-color: transparent;
     color: #F0FF05;
     border: none;
-      cursor: pointer;
+    cursor: pointer;
     font-size: 16px;
   }
   /* Styling for the bank row */
@@ -165,8 +165,8 @@
       <!-- Player 1 template -->
       <div class="player">
         <button class="delete-player" onclick="deletePlayer(this)">x</button>
-        <input type="text" class="player-name" placeholder="Player Name">
-        <input type="text" class="player-score" value="€0" onchange="updateScore(this)">
+        <input type="text" class="player-name" placeholder="Player Name" onchange="updateScore(this)">
+        <input type="text" class="player-score" value="€0">
         <div class="button-group">
           <button onclick="addMoney(this)">Win</button>
           <button onclick="subtractMoney(this)">Lose</button>
@@ -178,7 +178,10 @@
       </div>
     </div>
 
-    <button onclick="addPlayer()" class="px-4">Add Player</button>
+    <div class="flex justify-between">
+      <button class="px-4" onclick="addPlayer()">Add Player</button>
+      <button class="px-4" onclick="updateNames()">Update Names</button>
+    </div>
 
     <div class="mt-4">
       <div class="log" id="logScreen">
@@ -287,6 +290,10 @@
       var timeStamp = new Date().toLocaleTimeString();
       logScreen.innerHTML += (logScreen.innerHTML ? "<br>" : "") + timeStamp + ": " + text;
       logScreen.scrollTop = logScreen.scrollHeight;
+    }
+
+    function updateNames() {
+      updateScoreboard(); // Update the scoreboard after updating names
     }
   </script>
 </body>
