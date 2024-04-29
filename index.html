@@ -134,12 +134,31 @@
     cursor: pointer;
     font-size: 16px;
   }
+  /* Styling for the bank row */
+  .bank-row {
+    display: flex;
+    justify-content: space-between;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1.4em;
+  }
+  .bank-value {
+    color: #F0FF05;
+  }
 </style>
 </head>
 <body>
   <div class="container">
     <!-- Scoreboard -->
     <div id="scoreboard"></div>
+
+    <!-- Bank row -->
+    <div class="bank-row">
+      <h3>Bank</h3>
+      <div class="bank-value" id="bank">€0</div>
+    </div>
 
     <h2>Money Tracker</h2>
     <input type="number" id="pointsInput" placeholder="Enter € amount here" />
@@ -164,12 +183,9 @@
     <button onclick="addPlayer()">Add Player</button>
 
     <div class="mt-4">
-      <h3>Bank</h3>
-      <div id="bank">€0</div>
-    </div>
-
-    <div class="log" id="logScreen">
-      <h3>Action Log</h3>
+      <div class="log" id="logScreen">
+        <h3>Action Log</h3>
+      </div>
     </div>
   </div>
 
