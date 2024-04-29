@@ -256,8 +256,11 @@
 
     function resetMoney(button) {
       var playerScoreField = button.closest('.player').querySelector('.player-score');
+      var currentScore = parseInt(playerScoreField.value.substring(1), 10);
+      var bank = document.getElementById('bank');
+      bank.textContent = '€' + (parseInt(bank.textContent.substring(1), 10) + currentScore);
       playerScoreField.value = '€0';
-      logAction("Player's money reset to €0");
+      logAction("Player's money transferred to bank");
       updateScoreboard(); // Update the scoreboard after resetting money
     }
 
