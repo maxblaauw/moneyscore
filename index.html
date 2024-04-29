@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Money Tracker</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background-color: #121212; /* Dark background for the page */
+    color: #F0FF05; /* Bright yellow text color */
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Modern font */
+    margin: 0;
+    padding: 20px;
+  }
+  .container {
+    max-width: 900px; /* Increased width for more space */
+    margin: 0 auto;
+    padding: 30px; /* More padding for better spacing */
+    border: 2px solid #F0FF05;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+  }
+  input, select {
+    background-color: #333; /* Darker field backgrounds */
+    border: 1px solid #F0FF05; /* Yellow border */
+    color: #F0FF05; /* Yellow text */
+    padding: 12px; /* Increased padding for better readability */
+    margin-bottom: 16px; /* More space between fields */
+    box-sizing: border-box; /* Border and padding included in width */
+    border-radius: 4px; /* Rounded corners */
+  }
+  input.player-name {
+    width: 30%; /* Smaller width for name fields */
+  }
+  input.player-score {
+    width: 60%; /* Larger width for score fields */
+    font-size: 1.4em; /* Larger font size */
+    height: 46px; /* Double the height */
+    font-weight: bold; /* Bold font for emphasis */
+  }
+  input#pointsInput {
+    font-size: 1.2em; /* Larger text for main input field */
+    font-weight: bold; /* Bold text for emphasis */
+    margin-bottom: 20px; /* Increased space below the main input field */
+  }
+  button {
+    background-color: #333; /* Base button color */
+    border: 2px solid #F0FF05; /* Yellow border */
+    color: #F0FF05; /* Yellow text */
+    padding: 10px 20px; /* More padding for a larger button */
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
+  }
+  button:hover {
+    background-color: #F0FF05; /* Yellow background on hover */
+    color: #333; /* Dark text on hover */
+  }
+  #players {
+    display: flex; /* Align players in a horizontal line */
+    flex-wrap: wrap; /* Wrap players if they do not fit in one line */
+    gap: 20px; /* Space between players */
+  }
+  .player {
+    flex-basis: 250px; /* Fixed basis for each player */
+    padding-bottom: 10px;
+    margin-bottom: 20px; /* Increased space between player sections */
+    border-bottom: 1px solid #333; /* Subtle divider between players */
+  }
+  .button-group {
+    display: flex;
+    width: 100%; /* Make sure the button group takes full width of the player div */
+  }
+  .button-group > button {
+    flex: 1; /* Each button takes equal space in the group */
+  }
+  .collect-bank {
+    flex-grow: 2; /* Double the width compared to Win/Lose buttons */
+  }
+  .log {
+    background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent background for log */
+    border: 1px solid #F0FF05;
+    padding: 10px;
+    height: 150px; /* Fixed height with scrolling */
+    overflow-y: auto;
+    margin-top: 20px;
+    border-radius: 4px;
+    color: #F0FF05; /* Consistent yellow text for readability */
+  }
+  h2, h3 {
+    margin-top: 0; /* Remove top margin for headings */
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h2>Money Tracker</h2>
+    <input type="number" id="pointsInput" placeholder="Enter € amount here" />
+
+    <div id="players">
+      <!-- Player 1 template -->
+      <div class="player">
+        <input type="text" class="player-name" placeholder="Player Name">
+        <input type="text" class="player-score" value="€0" onchange="updateScore(this)">
+        <div class="button-group">
+          <button onclick="addMoney(this)">Win</button>
+          <button onclick="subtractMoney(this)">Lose</button>
+          <button class="collect-bank" onclick="collectBank(this)">Collect Bank</button>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="addPlayer()">Add Player</button>
+
+    <div class="mt-4">
+      <h3>Bank</h3>
+      <div id="bank">€0</div>
+    </div>
+
+    <div class="log" id="logScreen">
+      <h3>Action Log</h3>
+    </div>
+  </div>
+
+  <script>
+    function addMoney(button) {
+      var pointsInput = document.getElementById('pointsInput');
+      var pointsToAdd = parseInt(pointsInput.value, 10);
+      var playerScoreField = button.closest('.player').querySelector('.player-score');
+      if (isNaN(pointsToAdd) || pointsToAdd <= 0) {
+        alert('Please enter a positive € amount to add.');
+        return;
+      }
+      var currentScore = parseInt(playerScoreField.value.substring(1), 10); // Remove € symbol
+      playerScoreField.value = '€' + (currentScore + pointsToAdd);
+      logAction("€" + pointsToAdd + " added to " + getPlayerName(button));
+    }
+
+    function subtractMoney(button) {
+      var playerScoreField = button.closest('.player').querySelector('.player-score');
+      var currentScore = parseInt(playerScoreField.value.substring(1), 10); // Remove € symbol
+      if (isNaN(currentScore) || currentScore <= 0) {
+        alert('No money to subtract.');
+        return;
+      }
+      var pointsToSubtract = Math.round(currentScore / 2);
+      playerScoreField.value = '€' + (currentScore - pointsToSubtract);
+      var bank = document.getElementById('bank');
+      bank.textContent = '€' + (parseInt(bank.textContent.substring(1), 10) + pointsToSubtract);
+      logAction("€" + pointsToSubtract + " subtracted from " + getPlayerName(button));
+    }
+
+    function collectBank(button) {
+      var bank = document.getElementById('bank');
+      var playerScoreField = button.closest('.player').querySelector('.player-score');
+      var bankPoints = parseInt(bank.textContent.substring(1), 10);
+      if (bankPoints <= 0) {
+        alert('No money in the bank to collect.');
+        return;
+      }
+      var currentScore = parseInt(playerScoreField.value.substring(1), 10);
+      playerScoreField.value = '€' + (currentScore + bankPoints);
+      bank.textContent = '€0';
+      logAction("Bank collected by " + getPlayerName(button));
+    }
+
+    function addPlayer() {
+      var playersDiv = document.getElementById('players');
+      var newPlayerDiv = playersDiv.firstElementChild.cloneNode(true);
+      newPlayerDiv.querySelector('.player-name').value = '';
+      newPlayerDiv.querySelector('.player-score').value = '€0';
+      playersDiv.appendChild(newPlayerDiv);
+      logAction("New player added");
+    }
+
+    function getPlayerName(button) {
+      return button.closest('.player').querySelector('.player-name').value || "Unnamed Player";
+    }
+
+    function logAction(text) {
+      var logScreen = document.getElementById('logScreen');
+      var timeStamp = new Date().toLocaleTimeString();
+      logScreen.innerHTML += (logScreen.innerHTML ? "<br>" : "") + timeStamp + ": " + text;
+      logScreen.scrollTop = logScreen.scrollHeight;
+    }
+  </script>
+</body>
+</html>
