@@ -304,9 +304,8 @@
     });
 
     // Prompt before closing the tab
-    window.addEventListener('beforeunload', function(event) {
-      event.preventDefault();
-      event.returnValue = '';
+   window.onbeforeunload = function() {
+    return "Are you sure you want to leave? Your data will be lost.";
     });
   </script>
 </body>
