@@ -5,147 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dynamic Money Tracker</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>
-  body {
-    background-color: #121212; /* Dark background for the page */
-    color: #F0FF05; /* Bright yellow text color */
-    font-family: 'Helvetica Neue', Arial, sans-serif; /* Modern font */
-    margin: 0;
-    padding: 20px;
-  }
-  .container {
-    max-width: 900px; /* Increased width for more space */
-    margin: 0 auto;
-    padding: 30px; /* More padding for better spacing */
-    border: 2px solid #F0FF05;
-    border-radius: 8px;
-    background-color: #1e1e1e;
-  }
-  input, select {
-    background-color: #333; /* Darker field backgrounds */
-    border: 1px solid #F0FF05; /* Yellow border */
-    color: #F0FF05; /* Yellow text */
-    padding: 12px; /* Increased padding for better readability */
-    margin-bottom: 16px; /* More space between fields */
-    box-sizing: border-box; /* Border and padding included in width */
-    border-radius: 4px; /* Rounded corners */
-  }
-  input.player-name {
-    width: 30%; /* Smaller width for name fields */
-  }
-  input.player-score {
-    width: 60%; /* Larger width for score fields */
-    font-size: 1em; /* Larger font size */
-  }
-  input#pointsInput {
-    width: 100%;
-    font-size: 1.2em; /* Larger text for main input field */
-    font-weight: bold; /* Bold text for emphasis */
-    margin-bottom: 10px; /* Increased space below the main input field */
-    padding-top: 10px;
-  }
-  button {
-    background-color: #333; /* Base button color */
-    border: 1px solid #F0FF05; /* Yellow border */
-    color: #F0FF05; /* Yellow text */
-    padding: 10px; /* More padding for a larger button */
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s, color 0.2s; /* Smooth transition for hover effects */
-  }
-  button:hover {
-    background-color: #F0FF05; /* Yellow background on hover */
-    color: #333; /* Dark text on hover */
-  }
-  #players {
-    display: flex; /* Align players in a horizontal line */
-    flex-wrap: wrap; /* Wrap players if they do not fit in one line */
-    gap: 20px; /* Space between players */
-  }
-  .player {
-    flex-basis: calc(50% - 20px); /* Maximum of two players per row */
-    padding-bottom: 10px;
-    margin-bottom: 20px; /* Increased space between player sections */
-    border-bottom: 1px solid #333; /* Subtle divider between players */
-    position: relative;
-  }
-  .button-group {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%; /* Make sure the button group takes full width of the player div */
-    gap: 5px; /* Space between buttons */
-  }
-  .button-group > button {
-    flex-basis: calc(50% - 5px); /* Two buttons per row */
-    margin-top: 10px;
-  }
-  .collect-bank {
-    flex-grow: 2; /* Double the width compared to Win/Lose buttons */
-  }
-  .log {
-    background-color: rgba(30, 30, 30, 0.8); /* Semi-transparent background for log */
-    border: 1px solid #F0FF05;
-    padding: 10px;
-    height: 150px; /* Fixed height with scrolling */
-    overflow-y: auto;
-    margin-top: 20px;
-    border-radius: 4px;
-    color: #F0FF05; /* Consistent yellow text for readability */
-  }
-  h2, h3 {
-    margin-top: 0; /* Remove top margin for headings */
-  }
-  /* Styling for the scoreboard */
-  #scoreboard {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    background-color: #333;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 1.4em; /* 40% larger font size */
-  }
-  .score-box {
-    background-color: #F0FF05;
-    color: #333;
-    padding: 20px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    width: calc(50% - 20px); /* Maximum of two players per row */
-    text-align: center;
-  }
-  .score-name {
-    font-size: 1em; /* Normal font size for player name */
-    margin-bottom: 5px; /* Increased space between name and score */
-  }
-  .score-money {
-    font-size: 1.6em; /* Larger font size for money */
-    font-weight: bold; /* Bold font for emphasis */
-  }
-  .delete-player {
-    position: absolute;
-    right: 9px;
-    background-color: transparent;
-    color: #F0FF05;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  /* Styling for the bank row */
-  .bank-row {
-    display: flex;
-    justify-content: space-between;
-    background-color: #333;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 1.4em;
-  }
-  .bank-value {
-    color: #F0FF05;
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
@@ -174,6 +34,9 @@
         <div class="button-group">
           <button onclick="collectBank(this)">Collect Bank</button>
           <button class="reset-money" onclick="resetMoney(this)">Lose All</button>
+        </div>
+        <div class="button-group">
+          <button class="chicken-count" onclick="incrementChickenCount(this)">Chicken count 0</button>
         </div>
       </div>
     </div>
@@ -259,6 +122,7 @@
       var newPlayerDiv = playersDiv.firstElementChild.cloneNode(true);
       newPlayerDiv.querySelector('.player-name').value = '';
       newPlayerDiv.querySelector('.player-score').value = '€0';
+      newPlayerDiv.querySelector('.chicken-count').textContent = 'Chicken count 0';
       playersDiv.appendChild(newPlayerDiv);
       logAction("New player added");
       updateScoreboard(); // Update the scoreboard after adding a new player
@@ -279,6 +143,11 @@
       playerScoreField.value = '€0';
       logAction("Player's money transferred to bank");
       updateScoreboard(); // Update the scoreboard after resetting money
+    }
+
+    function incrementChickenCount(button) {
+      var count = parseInt(button.textContent.split(' ')[2]);
+      button.textContent = `Chicken count ${count + 1}`;
     }
 
     function getPlayerName(button) {
